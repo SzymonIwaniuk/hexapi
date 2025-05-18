@@ -1,4 +1,4 @@
-from model import Batch, Orderline
+from domain.model import Batch, Orderline
 from datetime import date
 
 
