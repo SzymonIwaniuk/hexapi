@@ -30,5 +30,5 @@ testpaths = [
 ]
 
 pythonpath = [
-    ".",
+    "src",
 ]
