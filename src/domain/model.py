@@ -19,3 +19,6 @@ class Batch:
 
     def allocate(self, line: Orderline) -> None:
         self.available_quantity -= line.qty
+
+    def can_allocate(self, line: Orderline) -> bool:
+        return self.sku == line.sku and self.available_quantity >= line.qty
