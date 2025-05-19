@@ -38,3 +38,10 @@ def test_cannot_allocate_if_skus_do_not_match() -> None:
     batch = Batch("batch-001", "UNCOMFORTABLE-HEADPHONES", qty=1, eta=None)
     different_sku_line = Orderline("order-123", "EXPENSIVE-IPAD", 100)
     assert batch.can_allocate(different_sku_line) is False
+
+
+def test_deallocate() -> None:
+    batch, line = make_batch_and_line("EXPENSIVE-HEADPHONES", 20, 2)
+    batch.allocate(line)
+    batch.deallocate()
+    assert batch.available_quantity == 20
