@@ -1,9 +1,7 @@
-from pydantic import BaseModel
+from dataclasses import dataclass
 
 
-class Model(BaseModel):
+@dataclass
+class Model:
     """Base class for model objects"""
-
-    model_config = {
-        "extra" : "allow"
-    }
+    pass

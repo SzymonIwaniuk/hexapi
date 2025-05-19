@@ -1,6 +1,8 @@
 from domain.base.model import Model
+from dataclasses import dataclass
 
 
+@dataclass
 class Entity(Model):
     """Base class for domain entitie objects."""
 
