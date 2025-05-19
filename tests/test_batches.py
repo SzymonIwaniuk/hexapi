@@ -43,5 +43,11 @@ def test_cannot_allocate_if_skus_do_not_match() -> None:
 def test_deallocate() -> None:
     batch, line = make_batch_and_line("EXPENSIVE-HEADPHONES", 20, 2)
     batch.allocate(line)
-    batch.deallocate()
+    batch.deallocate(line)
+    assert batch.available_quantity == 20
+
+
+def test_can_only_deallocate_lines():
+    batch, unallocated_line = make_batch_and_line("SOMETHING", 20, 2)
+    batch.deallocate(unallocated_line)
     assert batch.available_quantity == 20
