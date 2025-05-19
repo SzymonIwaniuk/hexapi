@@ -2,9 +2,9 @@ from domain.model import Batch, Orderline
 from datetime import date
 
 
-#helper function
+# helper function
 def make_batch_and_line(sku, batch_qty, line_qty):
-    return(
+    return (
         Batch("batch-001", sku, batch_qty, eta=date.today()),
         Orderline('order-123', sku, line_qty),
     )
@@ -47,7 +47,7 @@ def test_deallocate() -> None:
     assert batch.available_quantity == 20
 
 
-def test_can_only_deallocate_lines():
+def test_can_only_deallocate_allocated_lines():
     batch, unallocated_line = make_batch_and_line("SOMETHING", 20, 2)
     batch.deallocate(unallocated_line)
     assert batch.available_quantity == 20
