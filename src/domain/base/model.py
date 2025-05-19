@@ -1,7 +1,6 @@
-from dataclasses import dataclass
+from abc import ABC
 
 
-@dataclass
-class Model:
+class Model(ABC):
     """Base class for model objects"""
     pass

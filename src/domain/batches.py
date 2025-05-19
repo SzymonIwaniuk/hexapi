@@ -1,24 +1,53 @@
 from __future__ import annotations
 from dataclasses import dataclass
 from datetime import date
-from typing import Optional, Set
-from .base.model import Model
+from typing import Optional, Set, NewType
+from .base.value_object import ValueObject
+from .base.entity import Entity
 
 
-@dataclass(unsafe_hash=True)
-class Orderline(Model):
+# type hints
+Quantity = NewType('Quantity', int)
+Sku = NewType('Sku', str)
+Reference = NewType('Reference', str)
+
+
+@dataclass(frozen=True)
+class Orderline(ValueObject):
     orderid: str
     sku: str
     qty: int
 
 
-class Batch(Model):
-    def __init__(self, ref: str, sku: str, qty: int, eta: Optional[date]) -> None:
+class Batch(Entity):
+    def __init__(
+            self,
+            ref: Reference,
+            sku: Sku,
+            qty: Quantity,
+            eta: Optional[date]
+    ) -> None:
+
         self.reference = ref
         self.sku = sku
         self.eta = eta
         self._purchased_quantity = qty
         self._allocations: Set[Orderline] = set()
+
+    def __eq__(self, other):
+        if not isinstance(other, Batch):
+            return False
+        return other.reference == self.reference
+
+    def __hash__(self):
+        return hash(self.reference)
+
+    def __gt__(self, other):
+        if self.eta is None:
+            return False
+        if other.eta is None:
+            return True
+        return self.eta > other.eta
 
     def allocate(self, line: Orderline) -> None:
         if self.can_allocate(line):

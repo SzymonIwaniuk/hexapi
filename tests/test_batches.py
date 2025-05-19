@@ -1,9 +1,15 @@
-from domain.model import Batch, Orderline
+from domain.batches import Batch, Orderline
 from datetime import date
+from typing import Tuple
 
 
 # helper function
-def make_batch_and_line(sku, batch_qty, line_qty):
+def make_batch_and_line(
+        sku: str,
+        batch_qty: int,
+        line_qty: int
+) -> Tuple[Batch, Orderline]:
+
     return (
         Batch("batch-001", sku, batch_qty, eta=date.today()),
         Orderline('order-123', sku, line_qty),
