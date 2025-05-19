@@ -2,17 +2,17 @@ from __future__ import annotations
 from dataclasses import dataclass
 from datetime import date
 from typing import Optional, Set
-from .base.entity import Entity
+from .base.model import Model
 
 
 @dataclass(unsafe_hash=True)
-class Orderline(Entity):
+class Orderline(Model):
     orderid: str
     sku: str
     qty: int
 
 
-class Batch(Entity):
+class Batch(Model):
     def __init__(self, ref: str, sku: str, qty: int, eta: Optional[date]) -> None:
         self.reference = ref
         self.sku = sku
