@@ -1,5 +1,6 @@
 from datetime import date, timedelta
-from domain.batches import Batch, Orderline, allocate
+import pytest
+from domain.batches import Batch, Orderline, allocate, OutOfStock
 
 
 today = date.today()
@@ -29,3 +30,17 @@ def test_prefers_earlier_batches() -> None:
     assert earliest.available_quantity == 97
     assert medium.available_quantity == 100
     assert latest.available_quantity == 100
+
+
+def test_raises_out_of_stock_exception_if_cannot_allocate() -> None:
+    batch = Batch("batch1", 'SMALL-AMPLIFIER', 10, eta=today)
+    allocate(Orderline("order1", 'SMALL-AMPLIFIER', 10), [batch])
+
+    with pytest.raises(OutOfStock, match="SMALL-AMPLIFIER"):
+        allocate(Orderline("order2", "SMALL-AMPLIFIER", 1), [batch])
+
+
+def test_returns_allocated_batch_ref() -> None:
+    in_stock_batch = Batch("in-stock-batch", "BIG-SPEAKER", 10, eta=None)
+    shipment_batch = Batch("shipment-batch-ref", "BIG-SPEAKER", 10, eta=tomorrow)
+    line = Orderline("oref", "BIG-SPEAKER", 10)

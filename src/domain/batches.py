@@ -12,10 +12,18 @@ Sku = NewType('Sku', str)
 Reference = NewType('Reference', str)
 
 
+class OutOfStock(Exception):
+    pass
+
+
 def allocate(line: Orderline, batches: List[Batch]) -> str:
-    batch = next(b for b in sorted(batches) if b.can_allocate(line))
-    batch.allocate(line)
-    return batch.reference
+    try:
+        batch = next(b for b in sorted(batches) if b.can_allocate(line))
+        batch.allocate(line)
+        return batch.reference
+
+    except StopIteration:
+        raise OutOfStock(f"Out of stock for sku {line.sku}")
 
 
 @dataclass(frozen=True)
