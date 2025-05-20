@@ -1,7 +1,7 @@
 from __future__ import annotations
 from dataclasses import dataclass
 from datetime import date
-from typing import Optional, Set, NewType
+from typing import Optional, Set, NewType, List
 from .base.value_object import ValueObject
 from .base.entity import Entity
 
@@ -10,6 +10,12 @@ from .base.entity import Entity
 Quantity = NewType('Quantity', int)
 Sku = NewType('Sku', str)
 Reference = NewType('Reference', str)
+
+
+def allocate(line: Orderline, batches: List[Batch]) -> str:
+    batch = next(b for b in sorted(batches) if b.can_allocate(line))
+    batch.allocate(line)
+    return batch.reference
 
 
 @dataclass(frozen=True)
