@@ -40,3 +40,6 @@ max-line-length = 88
 extend-ignore = ["E203", "E401"]
 exclude = [".venv"]
 per-file-ingores = ["__init__.py"]
+
+[tool.black]
+line-length = 88
