@@ -1,18 +1,18 @@
 from sqlalchemy import Table, MetaData, Column, Integer, String
-from sqlalchemy.orm import mapper
-from ..domain.batches import Orderline
+from sqlalchemy.orm import registry
+from domain.batches import Orderline
 
-
+mapper_registry = registry()
 metadata = MetaData()
 
 order_lines = Table(
     'order_lines',
     metadata,
-    Column("order_id", String(255), primary_key=True),
+    Column("orderid", String(255), primary_key=True),
     Column("sku", String(255), primary_key=True),
     Column("qty", Integer),
 )
 
 
 def start_mappers():
-    mapper(Orderline, order_lines)
+    mapper_registry.map_imperatively(Orderline, order_lines)
