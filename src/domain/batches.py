@@ -4,16 +4,13 @@ from datetime import date
 from typing import Optional, Set, NewType, List
 from .base.value_object import ValueObject
 from .base.entity import Entity
+from .exceptions import OutOfStock
 
 
 # type hints
 Quantity = NewType('Quantity', int)
 Sku = NewType('Sku', str)
 Reference = NewType('Reference', str)
-
-
-class OutOfStock(Exception):
-    pass
 
 
 def allocate(line: Orderline, batches: List[Batch]) -> str:

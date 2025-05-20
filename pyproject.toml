@@ -1,7 +1,7 @@
 [project]
 name = "hexapi"
 version = "0.1.0"
-description = "fastApi project with tdd, ddd and event-driven microservices based on hexagonal arch"
+description = "Ecommerce project with tdd, ddd and event-driven microservices based on hexagonal arch"
 authors = [
     {name = "Your Name",email = "you@example.com"}
 ]
@@ -10,6 +10,7 @@ requires-python = ">=3.12"
 dependencies = [
     "fastapi[standard] (>=0.115.11,<0.116.0)",
     "boto3 (>=1.37,<2.0.0)",
+    "SQLAlchemy (>=2.0,<3.0)",
 ]
 
 
@@ -25,6 +26,7 @@ black = "^25.1.0"
 pytest = "^8.3.5"
 flake8 = "^7.0.0"
 flake8-pyproject = "^1.2.3"
+
 
 [tool.pytest.ini_options]
 testpaths = [

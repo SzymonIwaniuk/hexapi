@@ -44,3 +44,7 @@ def test_returns_allocated_batch_ref() -> None:
     in_stock_batch = Batch("in-stock-batch", "BIG-SPEAKER", 10, eta=None)
     shipment_batch = Batch("shipment-batch-ref", "BIG-SPEAKER", 10, eta=tomorrow)
     line = Orderline("oref", "BIG-SPEAKER", 10)
+
+    allocation = allocate(line, [in_stock_batch, shipment_batch])
+
+    assert allocation == in_stock_batch.reference
