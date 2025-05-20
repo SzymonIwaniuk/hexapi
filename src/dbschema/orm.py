@@ -1,6 +1,6 @@
 from sqlalchemy import Table, MetaData, Column, Integer, String
 from sqlalchemy.orm import registry
-from domain.batches import Orderline
+from domain.order.value_objects import Orderline
 
 mapper_registry = registry()
 metadata = MetaData()

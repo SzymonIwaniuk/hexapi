@@ -1,33 +1,13 @@
 from __future__ import annotations
-from dataclasses import dataclass
 from datetime import date
-from typing import Optional, Set, NewType, List
-from .base.value_object import ValueObject
-from .base.entity import Entity
-from .exceptions import OutOfStock
-
+from typing import Optional, Set, NewType
+from domain.base.entity import Entity
+from domain.order.value_objects import Orderline
 
 # type hints
 Quantity = NewType('Quantity', int)
 Sku = NewType('Sku', str)
 Reference = NewType('Reference', str)
-
-
-def allocate(line: Orderline, batches: List[Batch]) -> str:
-    try:
-        batch = next(b for b in sorted(batches) if b.can_allocate(line))
-        batch.allocate(line)
-        return batch.reference
-
-    except StopIteration:
-        raise OutOfStock(f"Out of stock for sku {line.sku}")
-
-
-@dataclass(unsafe_hash=True)
-class Orderline(ValueObject):
-    orderid: str
-    sku: str
-    qty: int
 
 
 class Batch(Entity):

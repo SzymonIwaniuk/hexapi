@@ -1,4 +1,5 @@
-from domain.batches import Batch, Orderline
+from domain.order.entities import Batch
+from domain.order.value_objects import Orderline
 from datetime import date
 from typing import Tuple
 
