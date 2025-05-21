@@ -1,6 +1,7 @@
 from sqlalchemy import text
 from domain.order.value_objects import Orderline
-
+from domain.order.entities import Batch
+from datetime import date
 
 def test_orderline_mapper_can_load_lines(session):
     session.execute(
@@ -29,3 +30,20 @@ def test_orderline_mapper_can_save_lines(session):
 
     rows = list(session.execute(text('SELECT orderid, sku, qty FROM "order_lines"')))
     assert rows == [("order1", "DECORATIVE-LEDS", 3)]
+
+
+def test_batches(session):
+    session.execute(text('INSERT INTO "batches" VALUES ("batch1", "sku1", 100, null)'))
+    session.execute(
+        text(
+            'INSERT INTO "batches" VALUES ("batch2", "sku2", 200, "2025-05-21")'
+        )
+    )
+
+    expected = [
+        Batch("batch1", "sku1", 100, eta=None),
+        Batch("batch2", "sku2", 200, eta=date(2025, 5, 21)),
+
+    ]
+
+    assert session.query(Batch).all() == expected
