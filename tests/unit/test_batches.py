@@ -1,5 +1,5 @@
 from domain.order.entities import Batch
-from domain.order.value_objects import Orderline
+from domain.order.value_objects import OrderLine
 from datetime import date
 from typing import Tuple
 
@@ -9,17 +9,17 @@ def make_batch_and_line(
         sku: str,
         batch_qty: int,
         line_qty: int
-) -> Tuple[Batch, Orderline]:
+) -> Tuple[Batch, OrderLine]:
 
     return (
         Batch("batch-001", sku, batch_qty, eta=date.today()),
-        Orderline('order-123', sku, line_qty),
+        OrderLine('order-123', sku, line_qty),
     )
 
 
 def test_allocating_to_a_batch_reduces_available_quantity() -> None:
     batch = Batch("batch-001", "SONY-HEADPHONES", qty=20, eta=date.today())
-    line = Orderline("order-ref", "SONY-HEADPHONES", 2)
+    line = OrderLine("order-ref", "SONY-HEADPHONES", 2)
 
     batch.allocate(line)
 
@@ -43,7 +43,7 @@ def test_can_allocate_if_available_equal_to_required() -> None:
 
 def test_cannot_allocate_if_skus_do_not_match() -> None:
     batch = Batch("batch-001", "UNCOMFORTABLE-HEADPHONES", qty=1, eta=None)
-    different_sku_line = Orderline("order-123", "EXPENSIVE-IPAD", 100)
+    different_sku_line = OrderLine("order-123", "EXPENSIVE-IPAD", 100)
     assert batch.can_allocate(different_sku_line) is False
 
 

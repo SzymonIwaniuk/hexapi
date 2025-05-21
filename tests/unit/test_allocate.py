@@ -1,7 +1,7 @@
 from datetime import date, timedelta
 import pytest
 from domain.order.entities import Batch
-from domain.order.value_objects import Orderline
+from domain.order.value_objects import OrderLine
 from domain.order.exceptions import OutOfStock
 from domain.order.services import allocate
 
@@ -14,7 +14,7 @@ later = tomorrow + timedelta(days=10)
 def test_prefers_current_stock_batches_to_shipments() -> None:
     in_stock_batch = Batch("in-stock-batch", "AMPLIFIER", 100, eta=None)
     shipment_batch = Batch("shipment-batch", "AMPLIFIER", 100, eta=tomorrow)
-    line = Orderline("oref", "AMPLIFIER", 10)
+    line = OrderLine("oref", "AMPLIFIER", 10)
 
     allocate(line, [in_stock_batch, shipment_batch])
 
@@ -26,7 +26,7 @@ def test_prefers_earlier_batches() -> None:
     earliest = Batch("speedy-batch", "MINIMALIST-MICRO", 100, eta=today)
     medium = Batch("normal-batch", "MINIMALIST-MICRO", 100, eta=tomorrow)
     latest = Batch("slow-batch", "MINIMALIST-MICRO", 100, eta=later)
-    line = Orderline("order1", "MINIMALIST-MICRO", 3)
+    line = OrderLine("order1", "MINIMALIST-MICRO", 3)
 
     allocate(line, [medium, earliest, latest])
 
@@ -37,16 +37,16 @@ def test_prefers_earlier_batches() -> None:
 
 def test_raises_out_of_stock_exception_if_cannot_allocate() -> None:
     batch = Batch("batch1", 'SMALL-AMPLIFIER', 10, eta=today)
-    allocate(Orderline("order1", 'SMALL-AMPLIFIER', 10), [batch])
+    allocate(OrderLine("order1", 'SMALL-AMPLIFIER', 10), [batch])
 
     with pytest.raises(OutOfStock, match="SMALL-AMPLIFIER"):
-        allocate(Orderline("order2", "SMALL-AMPLIFIER", 1), [batch])
+        allocate(OrderLine("order2", "SMALL-AMPLIFIER", 1), [batch])
 
 
 def test_returns_allocated_batch_ref() -> None:
     in_stock_batch = Batch("in-stock-batch", "BIG-SPEAKER", 10, eta=None)
     shipment_batch = Batch("shipment-batch-ref", "BIG-SPEAKER", 10, eta=tomorrow)
-    line = Orderline("oref", "BIG-SPEAKER", 10)
+    line = OrderLine("oref", "BIG-SPEAKER", 10)
 
     allocation = allocate(line, [in_stock_batch, shipment_batch])
 
