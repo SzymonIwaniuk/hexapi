@@ -1,6 +1,3 @@
-from .model import Model
-
-
-class ValueObject(Model):
+class ValueObject:
     """Base class for value objects"""
     pass

@@ -4,7 +4,7 @@ from domain.order.entities import Batch
 from datetime import date
 
 
-def test_OrderLine_mapper_can_load_lines(session):
+def test_orderline_mapper_can_load_lines(session) -> None:
     session.execute(
         text(
             "INSERT INTO order_lines (orderid, sku, qty) VALUES "
@@ -24,7 +24,7 @@ def test_OrderLine_mapper_can_load_lines(session):
     assert session.query(OrderLine).all() == expected
 
 
-def test_OrderLine_mapper_can_save_lines(session):
+def test_orderline_mapper_can_save_lines(session) -> None:
     new_line = OrderLine("order1", "DECORATIVE-LEDS", 3)
     session.add(new_line)
     session.commit()
@@ -33,7 +33,7 @@ def test_OrderLine_mapper_can_save_lines(session):
     assert rows == [("order1", "DECORATIVE-LEDS", 3)]
 
 
-def test_retrieving_batches(session):
+def test_retrieving_batches(session) -> None:
     session.execute(
         text(
             "INSERT INTO batches (reference, sku, _purchased_quantity, eta)"
@@ -57,20 +57,19 @@ def test_retrieving_batches(session):
     assert session.query(Batch).all() == expected
 
 
-def test_saving_batches(session):
+def test_saving_batches(session) -> None:
     batch = Batch("batch1", "sku1", 100, eta=None)
     session.add(batch)
     session.commit()
 
-    rows = list(
-                session.execute(
-                    text('SELECT reference, sku, _purchased_quantity, eta FROM "batches"')
+    rows = session.execute(
+                text('SELECT reference, sku, _purchased_quantity, eta FROM "batches"')
                 )
-            )
-    assert rows == [("batch1", "sku1", 100, None)]
+
+    assert list(rows) == [("batch1", "sku1", 100, None)]
 
 
-def test_saving_allocations(session):
+def test_saving_allocations(session) -> None:
     batch = Batch("batch1", "sku1", 100, eta=None)
     line = OrderLine("order1", "sku1", 10)
     batch.allocate(line)
@@ -79,14 +78,14 @@ def test_saving_allocations(session):
 
     rows = list(session.execute(
         text(
-            'SELECT OrderLine_id, batch_id FROM "allocations"')
+            'SELECT orderline_id, batch_id FROM "allocations"')
         )
     )
 
     assert rows == [(batch.id, line.id)]
 
 
-def test_retrieving_allocations(session):
+def test_retrieving_allocations(session) -> None:
     session.execute(
         text(
             'INSERT INTO order_lines (orderid, sku, qty) VALUES ("order1", "sku1", 12)'
