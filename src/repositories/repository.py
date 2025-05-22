@@ -20,9 +20,6 @@ class AbstractRepository(ABC):
 
           get(reference: str) -> Batch:
               Retrieve a Batch by its unique reference.
-
-          list() -> List[Batch]:
-              Return a list of all stored Batch instances.
       """
 
     @abstractmethod
@@ -47,3 +44,20 @@ class SqlAlchemyRepository(AbstractRepository):
     def list(self) -> List[Batch]:
         """List all batches in the repository."""
         return self.session.query(Batch).all()
+
+
+class FakeRepository(AbstractRepository):
+    def __init__(self, batches) -> None:
+        self._batches = set(batches)
+
+
+    def add(self, batch) -> None:
+        self._batches.add(batch)
+
+
+    def get(self, reference) -> Batch:
+        return next(b for b in self._batches if b.reference == reference)
+
+
+    def list(self) -> List[Batch]:
+        return list(self._batches)
