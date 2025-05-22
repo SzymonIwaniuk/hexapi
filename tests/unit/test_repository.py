@@ -3,7 +3,7 @@ from domain.order.entities import Batch
 from domain.order.value_objects import OrderLine
 from sqlalchemy import text
 from sqlalchemy.orm.session import Session
-import repository
+from repositories import repository
 
 
 def test_repository_can_save_a_batch(session: Session) -> None:
