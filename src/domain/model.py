@@ -13,12 +13,22 @@ Reference = NewType('Reference', str)
 
 @dataclass(unsafe_hash=True)
 class OrderLine:
+    """
+        Represents a request for a quantity of a specific product (sku)
+        in a customer's order.
+    """
+
     orderid: str
     sku: str
     qty: int
 
 
 class Batch:
+    """
+        Represents a delivery of a specific product available for allocation
+        to customer orders.
+    """
+
     def __init__(
             self,
             ref: Reference,

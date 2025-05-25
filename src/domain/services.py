@@ -20,7 +20,7 @@ def allocate(line: OrderLine, batches: List[Batch]) -> str:
 
        Raises:
            OutOfStock: If no batch can fulfill the order line.
-       """
+    """
 
     try:
         batch = next(b for b in sorted(batches) if b.can_allocate(line))
