@@ -1,6 +1,5 @@
-from domain.order.entities import Batch
-from domain.order.value_objects import OrderLine
-from domain.order.exceptions import OutOfStock
+from domain.model import Batch, OrderLine
+from domain.events import OutOfStock
 from typing import List
 
 
@@ -29,4 +28,4 @@ def allocate(line: OrderLine, batches: List[Batch]) -> str:
         return batch.reference
 
     except StopIteration:
-        raise OutOfStock(line.sku)
+        raise OutOfStock(f"Out of stock for sku {line.sku}")

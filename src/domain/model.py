@@ -1,8 +1,9 @@
 from __future__ import annotations
+
+from dataclasses import dataclass
 from datetime import date
 from typing import Optional, Set, NewType
-from domain.base.entity import Entity
-from domain.order.value_objects import OrderLine
+
 
 # type hints
 Quantity = NewType('Quantity', int)
@@ -10,7 +11,14 @@ Sku = NewType('Sku', str)
 Reference = NewType('Reference', str)
 
 
-class Batch(Entity):
+@dataclass(unsafe_hash=True)
+class OrderLine:
+    orderid: str
+    sku: str
+    qty: int
+
+
+class Batch:
     def __init__(
             self,
             ref: Reference,
@@ -25,15 +33,15 @@ class Batch(Entity):
         self._purchased_quantity = qty
         self._allocations: Set[OrderLine] = set()
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         if not isinstance(other, Batch):
             return False
         return other.reference == self.reference
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         return hash(self.reference)
 
-    def __gt__(self, other):
+    def __gt__(self, other) -> bool:
         if self.eta is None:
             return False
         if other.eta is None:

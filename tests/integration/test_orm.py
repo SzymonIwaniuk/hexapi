@@ -1,6 +1,5 @@
 from sqlalchemy import text
-from domain.order.value_objects import OrderLine
-from domain.order.entities import Batch
+from domain.model import Batch, OrderLine
 from datetime import date
 
 

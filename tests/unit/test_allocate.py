@@ -1,9 +1,8 @@
 from datetime import date, timedelta
 import pytest
-from domain.order.entities import Batch
-from domain.order.value_objects import OrderLine
-from domain.order.exceptions import OutOfStock
-from domain.order.services import allocate
+from domain.model import Batch, OrderLine
+from domain.events import OutOfStock
+from domain.services import allocate
 
 
 today = date.today()

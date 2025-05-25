@@ -1,11 +1,11 @@
 from sqlalchemy import Table, MetaData, Column, Integer, String, Date, ForeignKey
 from sqlalchemy.orm import registry, relationship
-from domain.order.value_objects import OrderLine
-from domain.order.entities import Batch
+from domain.model import Batch, OrderLine
 
 
 mapper_registry = registry()
 metadata = MetaData()
+
 
 order_lines = Table(
     'order_lines',
