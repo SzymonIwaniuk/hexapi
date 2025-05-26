@@ -17,8 +17,8 @@ async def allocate_endpoint(line: OrderLine) -> dict[str, str]:
 
     lines = model.OrderLine(line.orderid, line.sku, line.qty)
 
-    allocate(lines, batches)
+    batchref = allocate(lines, batches)
 
     session.commit()
 
-    return {'status', 'Ok'}
+    return {'status': 'Ok', "batchref": batchref}
