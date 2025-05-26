@@ -22,7 +22,7 @@ batches = Table(
     Column("id", Integer, primary_key=True, autoincrement=True),
     Column("reference", String(255)),
     Column("sku", String(255)),
-    Column("_purchased_quantity", Integer, nullable=False),
+    Column("purchased_quantity", Integer, nullable=False),
     Column("eta", Date, nullable=True),
 )
 
@@ -42,7 +42,7 @@ def start_mappers():
         Batch,
         batches,
         properties={
-            "_allocations": relationship(
+            "allocations": relationship(
                 lines_mapper, secondary=allocations, collection_class=set
             )
         }

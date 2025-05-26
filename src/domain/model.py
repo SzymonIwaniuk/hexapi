@@ -17,7 +17,6 @@ class OrderLine:
         Represents a request for a quantity of a specific product (sku)
         in a customer's order.
     """
-
     orderid: str
     sku: str
     qty: int
@@ -40,8 +39,8 @@ class Batch:
         self.reference = ref
         self.sku = sku
         self.eta = eta
-        self._purchased_quantity = qty
-        self._allocations: Set[OrderLine] = set()
+        self.purchased_quantity = qty
+        self.allocations: Set[OrderLine] = set()
 
     def __eq__(self, other) -> bool:
         if not isinstance(other, Batch):
@@ -60,19 +59,19 @@ class Batch:
 
     def allocate(self, line: OrderLine) -> None:
         if self.can_allocate(line):
-            self._allocations.add(line)
+            self.allocations.add(line)
 
     def deallocate(self, line: OrderLine) -> None:
-        if line in self._allocations:
-            self._allocations.remove(line)
+        if line in self.allocations:
+            self.allocations.remove(line)
 
     def can_allocate(self, line: OrderLine) -> bool:
         return self.sku == line.sku and self.available_quantity >= line.qty
 
     @property
     def allocated_quantity(self) -> int:
-        return sum(line.qty for line in self._allocations)
+        return sum(line.qty for line in self.allocations)
 
     @property
     def available_quantity(self) -> int:
-        return self._purchased_quantity - self.allocated_quantity
+        return self.purchased_quantity - self.allocated_quantity

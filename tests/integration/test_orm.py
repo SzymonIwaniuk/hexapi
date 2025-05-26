@@ -35,14 +35,14 @@ def test_orderline_mapper_can_save_lines(session) -> None:
 def test_retrieving_batches(session) -> None:
     session.execute(
         text(
-            "INSERT INTO batches (reference, sku, _purchased_quantity, eta)"
+            "INSERT INTO batches (reference, sku, purchased_quantity, eta)"
             ' VALUES ("batch1", "sku1", 100, null)'
         )
     )
 
     session.execute(
         text(
-            "INSERT INTO batches (reference, sku, _purchased_quantity, eta)"
+            "INSERT INTO batches (reference, sku, purchased_quantity, eta)"
             ' VALUES ("batch2", "sku2", 200, "2025-05-21")'
         )
     )
@@ -62,7 +62,7 @@ def test_saving_batches(session) -> None:
     session.commit()
 
     rows = session.execute(
-                text('SELECT reference, sku, _purchased_quantity, eta FROM "batches"')
+                text('SELECT reference, sku, purchased_quantity, eta FROM "batches"')
                 )
 
     assert list(rows) == [("batch1", "sku1", 100, None)]
@@ -98,7 +98,7 @@ def test_retrieving_allocations(session) -> None:
 
     session.execute(
         text(
-            "INSERT INTO batches (reference, sku, _purchased_quantity, eta) "
+            "INSERT INTO batches (reference, sku, purchased_quantity, eta) "
             'VALUES ("batch1", "sku1", 100, null)'
         )
     )
@@ -115,4 +115,4 @@ def test_retrieving_allocations(session) -> None:
 
     batch = session.query(Batch).one()
 
-    assert batch._allocations == {OrderLine("order1", "sku1", 12)}
+    assert batch.allocations == {OrderLine("order1", "sku1", 12)}
