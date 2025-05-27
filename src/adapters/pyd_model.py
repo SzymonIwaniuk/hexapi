@@ -79,7 +79,6 @@ class Batch(BaseModel, model.Batch):
             }
         }
 
-
     @field_validator('allocations', mode='before')
     @classmethod
     def convert_to_set(cls, value):

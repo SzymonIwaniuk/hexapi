@@ -1,17 +1,19 @@
 # pylint: disable=redefined-outer-name
 import time
+import pytest
 from pathlib import Path
 from typing import Callable
 
-import pytest
-from sqlalchemy import create_engine
+
+from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker, clear_mappers
 from sqlalchemy.orm.session import Session
 from sqlalchemy.engine import Engine
-
+from fastapi.testclient import TestClient
 
 from dbschema.orm import metadata, start_mappers
 from config import get_postgres_uri
+from fastapi_app import make_app
 
 
 @pytest.fixture
@@ -53,8 +55,8 @@ def add_stock(postgres_session) -> Callable:
         for ref, sku, qty, eta in lines:
             postgres_session.execute(
                 text(
-                "INSERT INTO batches (reference, sku, quantity, eta)"
-                " VALUES (:ref, :sku, :qty, :eta)",
+                    "INSERT INTO batches (reference, sku, purchased_quantity, eta)"
+                    " VALUES (:ref, :sku, :qty, :eta)",
                 ),
                 dict(ref=ref, sku=sku, qty=qty, eta=eta),
             )
@@ -100,7 +102,12 @@ def add_stock(postgres_session) -> Callable:
 
 
 @pytest.fixture
-def restart_api() -> None:
-    (Path(__file__).parent / "api.py").touch()
-    time.sleep(0.3)
+def test_client():
+    app = make_app(test_db=True)
+    return TestClient(app)
 
+
+@pytest.fixture
+def restart_api() -> None:
+    (Path(__file__).parent / "fastapi_app.py").touch()
+    time.sleep(0.3)

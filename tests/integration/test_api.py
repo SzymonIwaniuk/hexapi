@@ -1,12 +1,13 @@
 import uuid
 import pytest
-import requests
 
 import config
 
+from http import HTTPStatus
+
 
 def random_suffix() -> str:
-    return uuid.UUID.hex[:6]
+    return uuid.uuid4().hex[:6]
 
 
 def random_sku(name="") -> str:
@@ -21,8 +22,13 @@ def random_orderid(name="") -> str:
     return f"order-{name}-{random_suffix()}"
 
 
+def test_health_check(test_client) -> None:
+    response = test_client.get("/health_check")
+    assert response.status_code == HTTPStatus.OK
+
+
 @pytest.mark.usefixtures("restart_api")
-def test_api_returns_allocation(add_stock):
+def test_api_returns_allocation(test_client, add_stock):
     sku, othersku = random_sku(), random_sku("other")
 
     earlybatch = random_batchref(1)
@@ -33,15 +39,12 @@ def test_api_returns_allocation(add_stock):
         [
             (laterbatch, sku, 100, "2025-05-27"),
             (earlybatch, sku, 100, "2025-05-26"),
-            (otherbatch, othersku, 100, "None"),
+            (otherbatch, othersku, 100, None),
         ]
     )
     data = {"orderid": random_orderid(), "sku": sku, "qty": 3}
-    url = config.get_api_url()
+    response = test_client.post("/allocate", json=data)
 
-    response = requests.post(f"{url}/allocate", json=data)
-
-    assert response.status_code == 202
-    assert response.json()['status'] == 'Ok'
-    assert response.json()["batchref"] == earlybatch
-
+    assert response.status_code == HTTPStatus.ACCEPTED
+    assert response['status'] == 'Ok'
+    assert response["batchref"] == earlybatch
