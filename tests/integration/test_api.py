@@ -1,7 +1,6 @@
 import uuid
 import pytest
 
-import config
 
 from http import HTTPStatus
 
@@ -25,6 +24,7 @@ def random_orderid(name="") -> str:
 def test_health_check(test_client) -> None:
     response = test_client.get("/health_check")
     assert response.status_code == HTTPStatus.OK
+    assert response.json() == {"status": "Ok"}
 
 
 @pytest.mark.usefixtures("restart_api")
@@ -42,9 +42,8 @@ def test_api_returns_allocation(test_client, add_stock):
             (otherbatch, othersku, 100, None),
         ]
     )
+
     data = {"orderid": random_orderid(), "sku": sku, "qty": 3}
     response = test_client.post("/allocate", json=data)
-
     assert response.status_code == HTTPStatus.ACCEPTED
-    assert response['status'] == 'Ok'
-    assert response["batchref"] == earlybatch
+    assert response.json() == {"status": "Ok", "batchref": earlybatch}

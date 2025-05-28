@@ -1,16 +1,15 @@
 from __future__ import annotations
 
 
+from typing import Set, Optional
 from datetime import date
 from uuid import UUID
-from pydantic import BaseModel, Field, PositiveInt, field_validator
-from typing import Set, Optional
 
 
-from domain import model
+from pydantic import BaseModel, Field, PositiveInt, field_validator, ConfigDict
 
 
-class OrderLine(BaseModel, model.OrderLine):
+class OrderLine(BaseModel):
     id: Optional[UUID] = Field(default=None)
     sku: str
     qty: PositiveInt  # Because qty is greater than 0
@@ -20,7 +19,7 @@ class OrderLine(BaseModel, model.OrderLine):
         return hash((self.sku, self.qty, self.orderid))
 
     def __eq__(self, other):
-        if not isinstance(other, model.OrderLine):
+        if not isinstance(other, OrderLine):
             return False
 
         return all((
@@ -29,11 +28,10 @@ class OrderLine(BaseModel, model.OrderLine):
             other.qty == self.qty,
         ))
 
-    class Config:
-        from_attributes = True
-        frozen = True
-
-        schema_extra = {
+    model_config = ConfigDict(
+        from_attributes=True,
+        frozen=True,
+        json_schema_extra={
             'example': {
                 'id': '12345678123456781234567812345678',
                 'sku': 'SONY-HEADPHONES',
@@ -41,13 +39,14 @@ class OrderLine(BaseModel, model.OrderLine):
                 'orderid': 'order-123'
             }
         }
+    )
 
 
 class OrderLineWithAllocatedIn(OrderLine):
     allocated_in: Batch
 
 
-class Batch(BaseModel, model.Batch):
+class Batch(BaseModel):
     id: Optional[UUID] = Field(default=None)
     reference: str
     sku: str
@@ -55,14 +54,8 @@ class Batch(BaseModel, model.Batch):
     purchased_quantity: int
     allocations: Set[OrderLine] = Field(default_factory=set)
 
-    class Config:
-        from_attributes = True
-        arbitrary_types_allowed = True
-        json_encoders = {
-            set: list
-        }
-
-        schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             'example': {
                 'id': '12345678123456781234567812345678',
                 'reference': 'batch-001',
@@ -78,6 +71,7 @@ class Batch(BaseModel, model.Batch):
                 ]
             }
         }
+    )
 
     @field_validator('allocations', mode='before')
     @classmethod

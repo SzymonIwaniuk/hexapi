@@ -102,8 +102,8 @@ def add_stock(postgres_session) -> Callable:
 
 
 @pytest.fixture
-def test_client():
-    app = make_app(test_db=True)
+def test_client(postgres_session):
+    app = make_app(test_db=postgres_session)
     return TestClient(app)
 
 
