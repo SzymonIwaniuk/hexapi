@@ -1,18 +1,21 @@
 # pylint: disable=redefined-outer-name
 import time
 import pytest
+import pytest_asyncio
 from pathlib import Path
 from typing import Callable
-
+from httpx import AsyncClient, ASGITransport
 
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker, clear_mappers
 from sqlalchemy.orm.session import Session
 from sqlalchemy.engine import Engine
-from fastapi.testclient import TestClient
+
 
 from dbschema.orm import metadata, start_mappers
 from config import get_postgres_uri
+from starlette.testclient import TestClient
+
 from fastapi_app import make_app
 
 
@@ -99,6 +102,13 @@ def add_stock(postgres_session) -> Callable:
             )
 
         postgres_session.commit()
+
+
+@pytest_asyncio.fixture
+async def async_test_client(postgres_session):
+    app = make_app(test_db=postgres_session)
+    async with AsyncClient(transport=ASGITransport(app), base_url="http://test") as client:
+        yield client
 
 
 @pytest.fixture

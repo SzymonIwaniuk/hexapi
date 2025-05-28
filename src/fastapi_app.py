@@ -14,8 +14,8 @@ from domain import model
 def make_app(test_db: Session = None) -> FastAPI:
     app = FastAPI()
 
-    @app.get("/health_check")
-    async def health_check(status_code=HTTPStatus.OK) -> dict[str, str]:
+    @app.get("/health_check", status_code=HTTPStatus.OK)
+    async def health_check() -> dict[str, str]:
         return {"status": "Ok"}
 
     @app.post("/allocate", status_code=HTTPStatus.ACCEPTED)

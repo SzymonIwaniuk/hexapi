@@ -21,14 +21,16 @@ def random_orderid(name="") -> str:
     return f"order-{name}-{random_suffix()}"
 
 
-def test_health_check(test_client) -> None:
-    response = test_client.get("/health_check")
+@pytest.mark.asyncio
+async def test_health_check(async_test_client) -> None:
+    response = await async_test_client.get("/health_check")
     assert response.status_code == HTTPStatus.OK
     assert response.json() == {"status": "Ok"}
 
 
+@pytest.mark.asyncio
 @pytest.mark.usefixtures("restart_api")
-def test_api_returns_allocation(test_client, add_stock):
+async def test_api_returns_allocation(async_test_client, add_stock) -> None:
     sku, othersku = random_sku(), random_sku("other")
 
     earlybatch = random_batchref(1)
@@ -44,6 +46,6 @@ def test_api_returns_allocation(test_client, add_stock):
     )
 
     data = {"orderid": random_orderid(), "sku": sku, "qty": 3}
-    response = test_client.post("/allocate", json=data)
+    response = await async_test_client.post("/allocate", json=data)
     assert response.status_code == HTTPStatus.ACCEPTED
     assert response.json() == {"status": "Ok", "batchref": earlybatch}
