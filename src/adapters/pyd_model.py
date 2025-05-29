@@ -54,6 +54,21 @@ class Batch(BaseModel):
     purchased_quantity: int
     allocations: Set[OrderLine] = Field(default_factory=set)
 
+    def __eq__(self, other) -> bool:
+        if not isinstance(other, Batch):
+            return False
+        return other.reference == self.reference
+
+    def __hash__(self) -> int:
+        return hash(self.reference)
+
+    def __gt__(self, other) -> bool:
+        if self.eta is None:
+            return False
+        if other.eta is None:
+            return True
+        return self.eta > other.eta
+
     model_config = ConfigDict(
         json_schema_extra={
             'example': {
