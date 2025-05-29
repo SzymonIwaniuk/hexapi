@@ -37,10 +37,10 @@ pythonpath = [
 ]
 
 [tool.flake8]
-max-line-length = 88
+max-line-length = 120
 extend-ignore = ["E203", "E401"]
 exclude = [".venv"]
 per-file-ingores = ["__init__.py"]
 
 [tool.black]
-line-length = 88
+line-length = 120

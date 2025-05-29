@@ -1,10 +1,13 @@
 import uuid
+from http import HTTPStatus
+from typing import Callable
+
+
 import pytest
+from httpx import AsyncClient
 
 
 import config
-
-from http import HTTPStatus
 
 
 def random_suffix() -> str:
@@ -24,7 +27,7 @@ def random_orderid(name="") -> str:
 
 
 @pytest.mark.asyncio
-async def test_health_check(async_test_client) -> None:
+async def test_health_check(async_test_client: AsyncClient) -> None:
     response = await async_test_client.get("/health_check")
     assert response.status_code == HTTPStatus.OK
     assert response.json() == {"status": "Ok"}
@@ -32,7 +35,7 @@ async def test_health_check(async_test_client) -> None:
 
 @pytest.mark.asyncio
 @pytest.mark.usefixtures("restart_api")
-async def test_api_returns_allocation(async_test_client, add_stock) -> None:
+async def test_api_returns_allocation(async_test_client: AsyncClient, add_stock: Callable) -> None:
     sku, othersku = random_sku(), random_sku("other")
 
     earlybatch = random_batchref(1)
@@ -48,14 +51,15 @@ async def test_api_returns_allocation(async_test_client, add_stock) -> None:
     )
 
     data = {"orderid": random_orderid(), "sku": sku, "qty": 3}
-    response = await async_test_client.post("/allocate", json=data)
+    url = config.get_api_url()
+    response = await async_test_client.post(f"{url}/allocate", json=data)
     assert response.status_code == HTTPStatus.ACCEPTED
     assert response.json() == {"status": "Ok", "batchref": earlybatch}
 
 
 @pytest.mark.asyncio
 @pytest.mark.usefixtures("restart_api")
-async def test_allocations_are_persisted(async_test_client, add_stock) -> None:
+async def test_allocations_are_persisted(async_test_client: AsyncClient, add_stock: Callable) -> None:
     sku = random_sku()
     batch1, batch2 = random_batchref(1), random_batchref(2)
     order1, order2 = random_orderid(1), random_orderid(2)
@@ -64,13 +68,14 @@ async def test_allocations_are_persisted(async_test_client, add_stock) -> None:
     )
     line1 = {"orderid": order1, "sku": sku, "qty": 10}
     line2 = {"orderid": order2, "sku": sku, "qty": 10}
+    url = config.get_api_url()
 
     # first order uses up all stock in batch 1
-    r = await async_test_client.post("/allocate", json=line1)
+    r = await async_test_client.post(f"{url}/allocate", json=line1)
     assert r.status_code == HTTPStatus.ACCEPTED
     assert r.json() == {"status": "Ok", "batchref": batch1}
 
     # second should go to batch 2
-    r = await async_test_client.post("/allocate", json=line2)
+    r = await async_test_client.post(f"{url}/allocate", json=line2)
     assert r.status_code == HTTPStatus.ACCEPTED
     assert r.json() == {"status": "Ok", "batchref": batch2}

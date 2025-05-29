@@ -27,7 +27,7 @@ def make_app(test_db: Session = None) -> FastAPI:
         repo = repository.SqlAlchemyRepository(test_db)
         batches = repo.list()
 
-        batchref = allocate(line, batches)
+        batchref = await allocate(line, batches)
 
         return {"status": 'Ok', "batchref": batchref}
 
