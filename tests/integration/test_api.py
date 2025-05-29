@@ -79,3 +79,29 @@ async def test_allocations_are_persisted(async_test_client: AsyncClient, add_sto
     r = await async_test_client.post(f"{url}/allocate", json=line2)
     assert r.status_code == HTTPStatus.ACCEPTED
     assert r.json() == {"status": "Ok", "batchref": batch2}
+
+
+@pytest.mark.asyncio
+@pytest.mark.usefixtures("restart_api")
+async def test_400_message_for_out_of_stock(async_test_client: AsyncClient, add_stock: Callable) -> None:
+    sku, small_batch, large_order = random_sku(), random_batchref(), random_orderid()
+    add_stock(
+        [(small_batch, sku, 10, "2025-05-29"), ]
+
+    )
+    data = {"orderid": large_order, "sku": sku, "qty": 20}
+    url = config.get_api_url()
+    r = await async_test_client.post(f"{url}/allocate", json=data)
+    assert r.status_code == HTTPStatus.BAD_REQUEST
+    assert r.json()["detail"] == f"Out of stock for sku {sku}"
+
+
+@pytest.mark.asyncio
+@pytest.mark.usefixtures("restart_api")
+async def test_400_message_for_invalid_sku(async_test_client: AsyncClient, add_stock: Callable) -> None:
+    unknown_sku, orderid = random_sku(), random_orderid()
+    data = {"orderid": orderid, "sku": unknown_sku, "qty": 20}
+    url = config.get_api_url()
+    r = await async_test_client.post(f"{url}/allocate", json=data)
+    assert r.status_code == HTTPStatus.BAD_REQUEST
+    assert r.json()["detail"] == f"Invalid sku {unknown_sku}"
