@@ -69,6 +69,25 @@ class Batch(BaseModel):
             return True
         return self.eta > other.eta
 
+    def allocate(self, line: OrderLine) -> None:
+        if self.can_allocate(line):
+            self.allocations.add(line)
+
+    def deallocate(self, line: OrderLine) -> None:
+        if line in self.allocations:
+            self.allocations.remove(line)
+
+    def can_allocate(self, line: OrderLine) -> bool:
+        return self.sku == line.sku and self.available_quantity >= line.qty
+
+    @property
+    def allocated_quantity(self) -> int:
+        return sum(line.qty for line in self.allocations)
+
+    @property
+    def available_quantity(self) -> int:
+        return self.purchased_quantity - self.allocated_quantity
+
     model_config = ConfigDict(
         json_schema_extra={
             'example': {
