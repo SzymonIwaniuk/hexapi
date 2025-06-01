@@ -13,8 +13,8 @@ from domain import model
 from domain import events
 
 
-def is_valid_sku(sku: str, batches: List[Batch]) -> bool:
-    return sku in {b.sku for b in batches}
+import handlers
+
 
 
 def make_app(test_db: Session = None) -> FastAPI:
@@ -31,13 +31,10 @@ def make_app(test_db: Session = None) -> FastAPI:
 
         line = model.OrderLine(lines.orderid, lines.sku, lines.qty)
         repo = repository.SqlAlchemyRepository(test_db)
-        batches = repo.list()
 
-        if not is_valid_sku(line.sku, batches):
-            raise HTTPException(HTTPStatus.BAD_REQUEST, detail=f"Invalid sku {line.sku}")
         try:
-            batchref = allocate(line, batches)
-        except events.OutOfStock as e:
+            batchref = await handlers.allocate(line, repo, test_db)
+        except (events.OutOfStock, handlers.InvalidSku) as e:
             raise HTTPException(HTTPStatus.BAD_REQUEST, detail=str(e))
         return {"status": 'Ok', "batchref": batchref}
 

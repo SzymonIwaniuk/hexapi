@@ -30,7 +30,7 @@ allocations = Table(
     "allocations",
     metadata,
     Column("id", Integer, primary_key=True, autoincrement=True),
-    Column("OrderLine_id", ForeignKey("order_lines.id")),
+    Column("OrderLine_id", ForeignKey("order_lines.id", ondelete="CASCADE")),
     Column("batch_id", ForeignKey("batches.id")),
 )
 
@@ -43,7 +43,11 @@ def start_mappers():
         batches,
         properties={
             "allocations": relationship(
-                lines_mapper, secondary=allocations, collection_class=set
+                lines_mapper,
+                secondary=allocations,
+                collection_class=set,
+                cascade="all, delete",
+                passive_deletes=True
             )
         }
     )
