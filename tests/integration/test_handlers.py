@@ -1,9 +1,9 @@
 import pytest
+
 import handlers
-
-
 from adapters import pyd_model
 from repositories import repository
+
 
 class FakeSession:
     committed = False

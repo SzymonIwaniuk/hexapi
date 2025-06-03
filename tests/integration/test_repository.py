@@ -1,7 +1,8 @@
 # pylint: disable=protected-access
-from domain.model import Batch, OrderLine
 from sqlalchemy import text
 from sqlalchemy.orm.session import Session
+
+from domain.model import Batch, OrderLine
 from repositories import repository
 
 
@@ -12,29 +13,16 @@ def test_repository_can_save_a_batch(session: Session) -> None:
     repo.add(batch)
     session.commit()
 
-    rows = session.execute(
-        text(
-            'SELECT reference, sku, purchased_quantity,'
-            ' eta FROM "batches"'
-        )
-    )
+    rows = session.execute(text("SELECT reference, sku, purchased_quantity," ' eta FROM "batches"'))
 
     assert list(rows) == [("batch1", "PROFESSIONAL KEYBOARD", 1, None)]
 
 
 def insert_order_line(session: Session) -> int:
-    session.execute(
-        text(
-            "INSERT INTO order_lines (orderid, sku, qty)"
-            ' VALUES ("order1", "EARPADS", 2)'
-        )
-    )
+    session.execute(text("INSERT INTO order_lines (orderid, sku, qty)" ' VALUES ("order1", "EARPADS", 2)'))
 
     [[orderline_id]] = session.execute(
-        text(
-            "SELECT id FROM order_lines WHERE "
-            "orderid=:orderid AND sku=:sku"
-        ),
+        text("SELECT id FROM order_lines WHERE " "orderid=:orderid AND sku=:sku"),
         dict(orderid="order1", sku="EARPADS"),
     )
 
@@ -52,10 +40,7 @@ def insert_batch(session: Session, batch_id: int) -> int:
     )
 
     [[batch_id]] = session.execute(
-        text(
-            'SELECT id FROM batches WHERE '
-            'reference=:batch_id AND sku="EARPADS"'
-        ),
+        text("SELECT id FROM batches WHERE " 'reference=:batch_id AND sku="EARPADS"'),
         dict(batch_id=batch_id),
     )
 
@@ -65,8 +50,7 @@ def insert_batch(session: Session, batch_id: int) -> int:
 def insert_allocation(session: Session, orderline_id: int, batch_id: int) -> None:
     session.execute(
         text(
-            "INSERT INTO allocations (orderline_id, batch_id)"
-            " VALUES (:orderline_id, :batch_id)",
+            "INSERT INTO allocations (orderline_id, batch_id)" " VALUES (:orderline_id, :batch_id)",
         ),
         dict(orderline_id=orderline_id, batch_id=batch_id),
     )

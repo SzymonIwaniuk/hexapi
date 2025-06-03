@@ -1,14 +1,14 @@
-from sqlalchemy import Table, MetaData, Column, Integer, String, Date, ForeignKey
+from sqlalchemy import Column, Date, ForeignKey, Integer, MetaData, String, Table
 from sqlalchemy.orm import registry, relationship
-from domain.model import Batch, OrderLine
 
+from domain.model import Batch, OrderLine
 
 mapper_registry = registry()
 metadata = MetaData()
 
 
 order_lines = Table(
-    'order_lines',
+    "order_lines",
     metadata,
     Column("id", Integer, primary_key=True, autoincrement=True),
     Column("sku", String(255)),
@@ -43,11 +43,7 @@ def start_mappers():
         batches,
         properties={
             "allocations": relationship(
-                lines_mapper,
-                secondary=allocations,
-                collection_class=set,
-                cascade="all, delete",
-                passive_deletes=True
+                lines_mapper, secondary=allocations, collection_class=set, cascade="all, delete", passive_deletes=True
             )
-        }
+        },
     )

@@ -2,21 +2,21 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from datetime import date
-from typing import Optional, Set, NewType
-
+from typing import NewType, Optional, Set
 
 # type hints
-Quantity = NewType('Quantity', int)
-Sku = NewType('Sku', str)
-Reference = NewType('Reference', str)
+Quantity = NewType("Quantity", int)
+Sku = NewType("Sku", str)
+Reference = NewType("Reference", str)
 
 
 @dataclass(unsafe_hash=True)
 class OrderLine:
     """
-        Represents a request for a quantity of a specific product (sku)
-        in a customer's order.
+    Represents a request for a quantity of a specific product (sku)
+    in a customer's order.
     """
+
     orderid: str
     sku: str
     qty: int
@@ -24,17 +24,11 @@ class OrderLine:
 
 class Batch:
     """
-        Represents a delivery of a specific product available for allocation
-        to customer orders.
+    Represents a delivery of a specific product available for allocation
+    to customer orders.
     """
 
-    def __init__(
-            self,
-            ref: Reference,
-            sku: Sku,
-            qty: Quantity,
-            eta: Optional[date]
-    ) -> None:
+    def __init__(self, ref: Reference, sku: Sku, qty: Quantity, eta: Optional[date]) -> None:
 
         self.reference = ref
         self.sku = sku

@@ -1,20 +1,14 @@
 from http import HTTPStatus
 from typing import List
 
-
 from fastapi import FastAPI, HTTPException
 from sqlalchemy.orm import Session
 
-
-from domain.services import allocate
-from adapters.pyd_model import OrderLine, Batch
-from repositories import repository
-from domain import model
-from domain import events
-
-
 import handlers
-
+from adapters.pyd_model import Batch, OrderLine
+from domain import events, model
+from domain.services import allocate
+from repositories import repository
 
 
 def make_app(test_db: Session = None) -> FastAPI:
@@ -36,6 +30,6 @@ def make_app(test_db: Session = None) -> FastAPI:
             batchref = await handlers.allocate(line, repo, test_db)
         except (events.OutOfStock, handlers.InvalidSku) as e:
             raise HTTPException(HTTPStatus.BAD_REQUEST, detail=str(e))
-        return {"status": 'Ok', "batchref": batchref}
+        return {"status": "Ok", "batchref": batchref}
 
     return app

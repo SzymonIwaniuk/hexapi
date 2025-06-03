@@ -1,12 +1,10 @@
 from __future__ import annotations
 
-
-from typing import Set, Optional
 from datetime import date
+from typing import Optional, Set
 from uuid import UUID
 
-
-from pydantic import BaseModel, Field, PositiveInt, field_validator, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field, PositiveInt, field_validator
 
 
 class OrderLine(BaseModel):
@@ -22,23 +20,25 @@ class OrderLine(BaseModel):
         if not isinstance(other, OrderLine):
             return False
 
-        return all((
-            other.orderid == self.orderid,
-            other.sku == self.sku,
-            other.qty == self.qty,
-        ))
+        return all(
+            (
+                other.orderid == self.orderid,
+                other.sku == self.sku,
+                other.qty == self.qty,
+            )
+        )
 
     model_config = ConfigDict(
         from_attributes=True,
         frozen=True,
         json_schema_extra={
-            'example': {
-                'id': '12345678123456781234567812345678',
-                'sku': 'SONY-HEADPHONES',
-                'qty': 1,
-                'orderid': 'order-123'
+            "example": {
+                "id": "12345678123456781234567812345678",
+                "sku": "SONY-HEADPHONES",
+                "qty": 1,
+                "orderid": "order-123",
             }
-        }
+        },
     )
 
 
@@ -90,24 +90,24 @@ class Batch(BaseModel):
 
     model_config = ConfigDict(
         json_schema_extra={
-            'example': {
-                'id': '12345678123456781234567812345678',
-                'reference': 'batch-001',
-                'sku': 'SONY-HEADPHONES',
-                'purchased_quantity': 1,
-                'allocations': [
+            "example": {
+                "id": "12345678123456781234567812345678",
+                "reference": "batch-001",
+                "sku": "SONY-HEADPHONES",
+                "purchased_quantity": 1,
+                "allocations": [
                     {
-                        'id': '12345678123456781234567812345678',
-                        'orderid': 'order-123',
-                        'sku': 'SONY-HEADPHONES',
-                        'qty': 1
+                        "id": "12345678123456781234567812345678",
+                        "orderid": "order-123",
+                        "sku": "SONY-HEADPHONES",
+                        "qty": 1,
                     }
-                ]
+                ],
             }
         }
     )
 
-    @field_validator('allocations', mode='before')
+    @field_validator("allocations", mode="before")
     @classmethod
     def convert_to_set(cls, value):
         if isinstance(value, list):

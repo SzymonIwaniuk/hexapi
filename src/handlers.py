@@ -1,12 +1,11 @@
 from __future__ import annotations
-from typing import List
 
+from typing import List
 
 from sqlalchemy.orm import Session
 
-
-from domain import services
 from adapters.pyd_model import Batch, OrderLine
+from domain import services
 from repositories.repository import AbstractRepository
 
 

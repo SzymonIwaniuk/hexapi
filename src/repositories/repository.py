@@ -1,26 +1,28 @@
 from abc import ABC, abstractmethod
 from typing import List
+
 from sqlalchemy.orm import Session
+
 from domain.model import Batch
 
 
 class AbstractRepository(ABC):
     """
-      Abstract base class for batch repositories.
+    Abstract base class for batch repositories.
 
-      Defines the interface for repository implementations that handle storage
-      and retrieval of Batch entities.
+    Defines the interface for repository implementations that handle storage
+    and retrieval of Batch entities.
 
-      Subclasses must implement methods to add a batch, get a batch by its
-      reference, and list all batches.
+    Subclasses must implement methods to add a batch, get a batch by its
+    reference, and list all batches.
 
-      Methods:
-          add(batch: Batch) -> None:
-              Add a Batch instance to the repository.
+    Methods:
+        add(batch: Batch) -> None:
+            Add a Batch instance to the repository.
 
-          get(reference: str) -> Batch:
-              Retrieve a Batch by its unique reference.
-      """
+        get(reference: str) -> Batch:
+            Retrieve a Batch by its unique reference.
+    """
 
     @abstractmethod
     async def add(self, batch: Batch) -> None:

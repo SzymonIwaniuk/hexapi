@@ -1,9 +1,10 @@
 from datetime import date, timedelta
-import pytest
-from domain.model import Batch, OrderLine
-from domain.events import OutOfStock
-from domain.services import allocate
 
+import pytest
+
+from domain.events import OutOfStock
+from domain.model import Batch, OrderLine
+from domain.services import allocate
 
 today = date.today()
 tomorrow = today + timedelta(days=1)
@@ -35,8 +36,8 @@ def test_prefers_earlier_batches() -> None:
 
 
 def test_raises_out_of_stock_exception_if_cannot_allocate() -> None:
-    batch = Batch("batch1", 'SMALL-AMPLIFIER', 10, eta=today)
-    allocate(OrderLine("order1", 'SMALL-AMPLIFIER', 10), [batch])
+    batch = Batch("batch1", "SMALL-AMPLIFIER", 10, eta=today)
+    allocate(OrderLine("order1", "SMALL-AMPLIFIER", 10), [batch])
 
     with pytest.raises(OutOfStock, match="SMALL-AMPLIFIER"):
         allocate(OrderLine("order2", "SMALL-AMPLIFIER", 1), [batch])

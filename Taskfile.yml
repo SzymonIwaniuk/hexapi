@@ -1,0 +1,22 @@
+# https://taskfile.dev
+
+version: '3'
+
+tasks:
+  defalut:
+    cmds:
+      - task: test
+      - task: isort
+      - task: black
+
+  test:
+    cmds:
+      - pytest --tb=short
+
+  black:
+    cmds:
+      - black $(find * -name '*.py')
+
+  isort:
+    cmds:
+      - isort .

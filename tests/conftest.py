@@ -1,27 +1,25 @@
 # pylint: disable=redefined-outer-name
 import time
-import pytest
-import pytest_asyncio
 from pathlib import Path
 from typing import Callable
-from httpx import AsyncClient, ASGITransport
 
+import pytest
+import pytest_asyncio
+from httpx import ASGITransport, AsyncClient
 from sqlalchemy import create_engine, text
-from sqlalchemy.orm import sessionmaker, clear_mappers
-from sqlalchemy.orm.session import Session
 from sqlalchemy.engine import Engine
-
-
-from dbschema.orm import metadata, start_mappers
-from config import get_postgres_uri
+from sqlalchemy.orm import clear_mappers, sessionmaker
+from sqlalchemy.orm.session import Session
 from starlette.testclient import TestClient
 
+from config import get_postgres_uri
+from dbschema.orm import metadata, start_mappers
 from fastapi_app import make_app
 
 
 @pytest.fixture
 def in_memory_db() -> Engine:
-    engine = create_engine('sqlite:///:memory:')
+    engine = create_engine("sqlite:///:memory:")
     metadata.create_all(engine)
     return engine
 
@@ -58,8 +56,7 @@ def add_stock(postgres_session) -> Callable:
         for ref, sku, qty, eta in lines:
             postgres_session.execute(
                 text(
-                    "INSERT INTO batches (reference, sku, purchased_quantity, eta)"
-                    " VALUES (:ref, :sku, :qty, :eta)",
+                    "INSERT INTO batches (reference, sku, purchased_quantity, eta)" " VALUES (:ref, :sku, :qty, :eta)",
                 ),
                 dict(ref=ref, sku=sku, qty=qty, eta=eta),
             )
@@ -98,7 +95,7 @@ def add_stock(postgres_session) -> Callable:
                 text(
                     "DELETE FROM order_lines WHERE sku=:sku",
                 ),
-                dict(sku=sku)
+                dict(sku=sku),
             )
 
         postgres_session.commit()

@@ -1,25 +1,26 @@
-from domain.model import Batch, OrderLine
-from domain.events import OutOfStock
 from typing import List
+
+from domain.events import OutOfStock
+from domain.model import Batch, OrderLine
 
 
 def allocate(line: OrderLine, batches: List[Batch]) -> str:
     """
-       Allocate an order line to the first batch that can fulfill it.
+    Allocate an order line to the first batch that can fulfill it.
 
-       This function attempts to allocate the given order line to the earliest
-       batch that has sufficient quantity available. Batches are assumed to be
-       sorted by arrival time (ETA), with in-stock batches prioritized.
+    This function attempts to allocate the given order line to the earliest
+    batch that has sufficient quantity available. Batches are assumed to be
+    sorted by arrival time (ETA), with in-stock batches prioritized.
 
-       Args:
-           line (OrderLine): The order line to allocate.
-           batches (List[Batch]): A list of available batches to consider for allocation
+    Args:
+        line (OrderLine): The order line to allocate.
+        batches (List[Batch]): A list of available batches to consider for allocation
 
-       Returns:
-           str: The reference of the batch that was allocated.
+    Returns:
+        str: The reference of the batch that was allocated.
 
-       Raises:
-           OutOfStock: If no batch can fulfill the order line.
+    Raises:
+        OutOfStock: If no batch can fulfill the order line.
     """
 
     try:

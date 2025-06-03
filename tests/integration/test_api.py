@@ -2,10 +2,8 @@ import uuid
 from http import HTTPStatus
 from typing import Callable
 
-
 import pytest
 from httpx import AsyncClient
-
 
 import config
 
@@ -64,7 +62,10 @@ async def test_allocations_are_persisted(async_test_client: AsyncClient, add_sto
     batch1, batch2 = random_batchref(1), random_batchref(2)
     order1, order2 = random_orderid(1), random_orderid(2)
     add_stock(
-        [(batch1, sku, 10, "2025-05-29"), (batch2, sku, 100, "2025-05-30"),],
+        [
+            (batch1, sku, 10, "2025-05-29"),
+            (batch2, sku, 100, "2025-05-30"),
+        ],
     )
     line1 = {"orderid": order1, "sku": sku, "qty": 10}
     line2 = {"orderid": order2, "sku": sku, "qty": 10}
@@ -86,8 +87,9 @@ async def test_allocations_are_persisted(async_test_client: AsyncClient, add_sto
 async def test_400_message_for_out_of_stock(async_test_client: AsyncClient, add_stock: Callable) -> None:
     sku, small_batch, large_order = random_sku(), random_batchref(), random_orderid()
     add_stock(
-        [(small_batch, sku, 10, "2025-05-29"), ]
-
+        [
+            (small_batch, sku, 10, "2025-05-29"),
+        ]
     )
     data = {"orderid": large_order, "sku": sku, "qty": 20}
     url = config.get_api_url()

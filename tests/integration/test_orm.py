@@ -1,6 +1,8 @@
-from sqlalchemy import text
-from domain.model import Batch, OrderLine
 from datetime import date
+
+from sqlalchemy import text
+
+from domain.model import Batch, OrderLine
 
 
 def test_orderline_mapper_can_load_lines(session) -> None:
@@ -34,10 +36,7 @@ def test_orderline_mapper_can_save_lines(session) -> None:
 
 def test_retrieving_batches(session) -> None:
     session.execute(
-        text(
-            "INSERT INTO batches (reference, sku, purchased_quantity, eta)"
-            ' VALUES ("batch1", "sku1", 100, null)'
-        )
+        text("INSERT INTO batches (reference, sku, purchased_quantity, eta)" ' VALUES ("batch1", "sku1", 100, null)')
     )
 
     session.execute(
@@ -50,7 +49,6 @@ def test_retrieving_batches(session) -> None:
     expected = [
         Batch("batch1", "sku1", 100, eta=None),
         Batch("batch2", "sku2", 200, eta=date(2025, 5, 21)),
-
     ]
 
     assert session.query(Batch).all() == expected
@@ -61,9 +59,7 @@ def test_saving_batches(session) -> None:
     session.add(batch)
     session.commit()
 
-    rows = session.execute(
-                text('SELECT reference, sku, purchased_quantity, eta FROM "batches"')
-                )
+    rows = session.execute(text('SELECT reference, sku, purchased_quantity, eta FROM "batches"'))
 
     assert list(rows) == [("batch1", "sku1", 100, None)]
 
@@ -75,21 +71,13 @@ def test_saving_allocations(session) -> None:
     session.add(batch)
     session.commit()
 
-    rows = list(session.execute(
-        text(
-            'SELECT orderline_id, batch_id FROM "allocations"')
-        )
-    )
+    rows = list(session.execute(text('SELECT orderline_id, batch_id FROM "allocations"')))
 
     assert rows == [(batch.id, line.id)]
 
 
 def test_retrieving_allocations(session) -> None:
-    session.execute(
-        text(
-            'INSERT INTO order_lines (orderid, sku, qty) VALUES ("order1", "sku1", 12)'
-        )
-    )
+    session.execute(text('INSERT INTO order_lines (orderid, sku, qty) VALUES ("order1", "sku1", 12)'))
 
     [[olid]] = session.execute(
         text("SELECT id FROM order_lines WHERE orderid=:orderid AND sku=:sku"),
@@ -97,10 +85,7 @@ def test_retrieving_allocations(session) -> None:
     )
 
     session.execute(
-        text(
-            "INSERT INTO batches (reference, sku, purchased_quantity, eta) "
-            'VALUES ("batch1", "sku1", 100, null)'
-        )
+        text("INSERT INTO batches (reference, sku, purchased_quantity, eta) " 'VALUES ("batch1", "sku1", 100, null)')
     )
 
     [[bid]] = session.execute(
