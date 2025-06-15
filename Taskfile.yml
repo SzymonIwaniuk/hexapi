@@ -3,7 +3,7 @@
 version: '3'
 
 tasks:
-  defalut:
+  run:
     cmds:
       - task: test
       - task: isort

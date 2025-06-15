@@ -8,6 +8,7 @@ from typing import NewType, Optional, Set
 Quantity = NewType("Quantity", int)
 Sku = NewType("Sku", str)
 Reference = NewType("Reference", str)
+OrderId = NewType("OrderId", str)
 
 
 @dataclass(unsafe_hash=True)
@@ -17,9 +18,9 @@ class OrderLine:
     in a customer's order.
     """
 
-    orderid: str
-    sku: str
-    qty: int
+    orderid: OrderId
+    sku: Sku
+    qty: Quantity
 
 
 class Batch:

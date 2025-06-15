@@ -23,7 +23,14 @@ def make_app(test_db: Session = None) -> FastAPI:
         lines: OrderLine,
     ) -> dict[str, str]:
 
-        line = model.OrderLine(lines.orderid, lines.sku, lines.qty)
+        print(vars(lines))
+        print(lines.__dict__)
+        print(f"lines: {lines} ({type(lines)})")
+        print(f"lines.orderid: {getattr(lines, 'orderid', None)}")
+        print(f"lines.sku: {getattr(lines, 'sku', None)}")
+        print(f"lines.qty: {getattr(lines, 'qty', None)}")
+
+        line = model.OrderLine(**lines.model_dump())  # pydantic V3.0
         repo = repository.SqlAlchemyRepository(test_db)
 
         try:
