@@ -4,7 +4,7 @@ from typing import List
 
 from sqlalchemy.orm import Session
 
-from adapters.pyd_model import Batch, OrderLine
+from domain.model import Batch, OrderLine
 from domain import services
 from repositories.repository import AbstractRepository
 

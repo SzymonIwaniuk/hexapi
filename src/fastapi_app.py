@@ -5,7 +5,7 @@ from fastapi import FastAPI, HTTPException
 from sqlalchemy.orm import Session
 
 import handlers
-from adapters.pyd_model import Batch, OrderLine
+from domain.model import Batch, OrderLine
 from domain import events, model
 from domain.services import allocate
 from repositories import repository
